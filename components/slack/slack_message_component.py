@@ -60,7 +60,7 @@ class SlackMessageComponent(Component):
             # Use the client to send a message
             response = client.chat_postMessage(
                 channel=self.channel_id,
-                thread_ts=self.session_id,
+                thread_ts=self.session_id.rsplit('-', 1)[1],
                 text=self.message
             )
             
