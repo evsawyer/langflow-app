@@ -28,16 +28,28 @@ class SlackEventComponent(Component):
         try:
             # Parse the input JSON string
             event_data = json.loads(self.input_value)
+            files_list = event_data.get("files", []) # Safely get files list or empty list
+
+            slack_urls = []
+            if files_list: # Check if the list is not empty
+                for file_data in files_list: # Corrected variable name
+                    url = file_data.get("url_private_download") # Safely get the URL
+                    if url: # Only append if a URL was actually found
+                        slack_urls.append(url)
+            # Join the URLs into a single string (will be "" if list is empty)
+            urls_string = "\n".join(slack_urls)
+
+            
             event_type = event_data.get("type", "")
 
             if event_type == "reaction_added":
                 # Extract the reaction value
                 reaction = event_data.get("reaction", "No reaction found")
-                output = reaction
+                output = f"{reaction}\n{urls_string}"
             elif event_type == "app_mention":
                 # Extract the message text
                 message = event_data.get("text", "No message found")
-                output = message
+                output = f"{message}\n{urls_string}"
             else:
                 output = {"error": "Unknown event type"}
 
