@@ -20,7 +20,7 @@ class NLToBigQueryComponent(Component):
     display_name = "Botvertiser"
     description = "Converts natural language to SQL and executes it on BigQuery"
     icon = "hand-metal"
-    name = "NLToBigQueryComponent"
+    name = "Botvertiser"
     
     inputs = [
         MessageTextInput(
@@ -33,10 +33,11 @@ class NLToBigQueryComponent(Component):
         DropdownInput(
             name="client",
             display_name="Client",
-            options=["Olas Media", "TechFirm", "MarketCorp", "DigitalSolutions"],
+            options=["Olas Media", "Independent Voter Project", "IVC Business Account", "DigitalSolutions"],
             value="Olas Media",
             required=True,
-            info="Select the client for this query"
+            info="Select the client for this query",
+            tool_mode=True
         ),
         MultilineInput(
             name="prompt",
@@ -48,7 +49,8 @@ class NLToBigQueryComponent(Component):
             name="schema",
             display_name="Table Schema",
             required=True,
-            info="Paste a plain-text version of the table schema for LLM context"
+            info="Paste a plain-text version of the table schema for LLM context",
+            advanced=True
         ),
         DropdownInput(
             name="model_name",
@@ -74,8 +76,8 @@ class NLToBigQueryComponent(Component):
             name="show_sql",
             display_name="Show Generated SQL",
             options=["Yes", "No"],
-            value="Yes",
-            required=True,
+            value="No",
+            required=False,
             info="Choose whether to include the generated SQL in the output"
         )
     ]
