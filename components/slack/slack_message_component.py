@@ -3,12 +3,15 @@ from langflow.custom import Component
 from langflow.io import MessageTextInput, StrInput, Output
 from langflow.schema import Data
 
+
 class SlackMessageComponent(Component):
     display_name = "Slack Message Sender"
     description = "Send a message to a Slack channel."
     documentation: str = "https://docs.langflow.org/components-custom-components"
     icon = "message-square"
     name = "SlackMessageSender"
+    
+    
 
     inputs = [
         StrInput(
@@ -16,12 +19,6 @@ class SlackMessageComponent(Component):
             display_name="Slack Bot Token",
             info="Your Slack bot token (starts with xoxb-)",
             value="",  # Leave empty for security reasons
-        ),
-        StrInput(
-            name="channel_id",
-            display_name="Channel ID",
-            info="The ID of the Slack channel to send the message to (e.g., C08GBSCSEG3)",
-            value="",
         ),
         MessageTextInput(
             name="message",
@@ -47,20 +44,17 @@ class SlackMessageComponent(Component):
             error_message = "Error: Slack bot token is required."
             print(error_message)
             return Data(value=error_message)
-        
-        if not self.channel_id:
-            error_message = "Error: Channel ID is required."
-            print(error_message)
-            return Data(value=error_message)
             
         # Initialize the Slack WebClient
         try:
             client = WebClient(token=self.slack_token)
             
+            channel_id, thread_ts = self.session_id.split('-', 1)
+            
             # Use the client to send a message
             response = client.chat_postMessage(
-                channel=self.channel_id,
-                thread_ts=self.session_id.rsplit('-', 1)[1],
+                channel=channel_id,
+                thread_ts=thread_ts,
                 text=self.message
             )
             
