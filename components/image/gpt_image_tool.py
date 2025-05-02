@@ -1,5 +1,5 @@
 from langflow.custom import Component
-from langflow.io import MessageTextInput, Output
+from langflow.io import MessageTextInput, Output, IntInput
 from langflow.schema.message import Message
 from langflow.schema.content_block import ContentBlock
 from langflow.schema.content_types import MediaContent
@@ -59,7 +59,13 @@ class GPTImageTool(Component):
         MessageTextInput(
             name="image_url",
             display_name="Image URL(s) (optional)",
-            info="Either a single image URL or a JSON array of image URLs"
+            info="Either a single image URL or a JSON array of image URLs",
+            tool_mode=True,
+        ),
+        IntInput(
+            name="timeout",
+            display_name="Timeout for Openai Request (seconds)",
+            value=180,
         ),
     ]
 
@@ -89,22 +95,42 @@ class GPTImageTool(Component):
     
                 async with httpx.AsyncClient(timeout=30.0) as client:
                     for idx, url in enumerate(image_urls):
+                        # Convert the URL to request JPG format
+                        if "/upload/" in url:
+                            url = url.replace("/upload/", "/upload/f_jpg/")
                         img_response = await client.get(url)
+                        # self.log("downlaoding image....")
+                        # self.log(img_response.raise_for_status())
+                        print("downlaoding image....")
+                        print(img_response.raise_for_status())
                         img_response.raise_for_status()
-                        temp_path = Path(tempfile.mkstemp(suffix=".png")[1])
+                        temp_path = Path(tempfile.mkstemp(suffix=".jpg")[1])
                         temp_path.write_bytes(img_response.content)
                         temp_files.append(temp_path)
                         files.append(
-                            ("image[]", (f"image{idx}.png", temp_path.open("rb"), "image/png"))
+                            ("image[]", (f"image{idx}.jpg", temp_path.open("rb"), "image/jpeg"))
                         )
     
-                async with httpx.AsyncClient(timeout=60.0) as client:
+                async with httpx.AsyncClient(timeout=self.timeout) as client:
+                    # self.log("sending api request to open ai: ")
+                    # self.log(headers)
+                    # self.log(files)
+                    
+                    print("sending api request to open ai: ")
+                    print(headers)
+                    print(files)
+                    
                     response = await client.post(
                         "https://api.openai.com/v1/images/edits",
                         headers=headers,
                         files=files,
                     )
                     response.raise_for_status()
+                    
+                    # self.log("post request response from opejn ai: ")
+                    # self.log(response.raise_for_status())
+                    print("post request response from opejn ai: ")
+                    print(response)
             else:
                 # Image generation mode
                 headers["Content-Type"] = "application/json"
@@ -123,6 +149,8 @@ class GPTImageTool(Component):
                     response.raise_for_status()
     
             result = response.json()
+            print("here's what we got back from open ai: ")
+            print(result)
             image_data = result["data"][0]
     
             if "b64_json" in image_data:
