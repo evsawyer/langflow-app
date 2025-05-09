@@ -5,20 +5,13 @@ description = ""
 authors = [
     {name = "Evan",email = "evan@ivc.media"}
 ]
-readme = "README.md"
+
 requires-python = ">=3.11,<3.13"
 dependencies = [
-    "slack-sdk (>=3.35.0,<4.0.0)",
-    "idna (>=3.10,<4.0)",
-    "requests (>=2.32.3,<3.0.0)",
-    "llama-index (>=0.12.34,<0.13.0)",
-    "llama-index-vector-stores-pinecone (>=0.4.5,<0.5.0)",
-    "cloudinary (>=1.44.0,<2.0.0)",
-    "pinecone (>=6.0.2,<7.0.0)",
-    "llama-index-readers-google (>=0.6.1,<0.7.0)",
+    "slack-sdk",
+    "llama-index",
+    "llama-index-vector-stores-pinecone",
+    "cloudinary",
+    "llama-index-readers-google",
+    "langflow>=1.0.19.post2",
 ]
-
-
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
