@@ -14,4 +14,5 @@ dependencies = [
     "cloudinary",
     "llama-index-readers-google",
     "langflow>=1.0.19.post2",
+    "llama-index-cloud-sql-pg>=0.2.2",
 ]
