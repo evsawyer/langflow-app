@@ -119,7 +119,7 @@ class PineconeDocumentRetriever(Component):
             filters = MetadataFilters(
                 filters=[
                     MetadataFilter(
-                        key="file id",
+                        key="file_id",
                         value=self.file_id,
                         operator=FilterOperator.EQ
                     )
@@ -132,7 +132,7 @@ class PineconeDocumentRetriever(Component):
 
 
             if not nodes:
-                msg = f"No document found with file path: {self.file_id}"
+                msg = f"No document found with file ID: {self.file_id}"
                 raise ValueError(msg)
                 
             relationships = nodes[0].relationships
