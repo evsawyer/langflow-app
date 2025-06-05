@@ -7,3 +7,6 @@ uv add cloudinary
 uv add slack-sdk
 uv pip uninstall pinecone-plugin-inference
 uv pip install --upgrade urllib3 -->
+
+<!-- need credentials.json file of service account in working directory -->
+<!-- export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/credentials.json" -->
